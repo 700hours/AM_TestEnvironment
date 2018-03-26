@@ -10,20 +10,20 @@ namespace TestEnvironment.NPCs
     {
         public override void SetDefaults()
         {
-            npc.width = 32;
-            npc.height = 32;
+            npc.width = 18;
+            npc.height = 28;
             npc.friendly = false;
             npc.aiStyle = 6;
-            aiType = NPCID.Worm;
+        //  aiType = NPCID.Worm;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.behindTiles = true;
-            npc.damage = 10;
-            npc.defense = 15;
-            npc.lifeMax = 250;
+            npc.damage = 18;
+            npc.defense = 4;
+            npc.lifeMax = 120;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.knockBackResist = 0.5f;
+            npc.knockBackResist = 0f;
         }
         public override void AI()
         {

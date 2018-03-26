@@ -25,6 +25,7 @@ namespace TestEnvironment.NPCs
         bool alarmed = true, navigate = false;
         float Depreciate = 60, Point, Time = 60;
         const int AItime = 600;
+        const float radians = 0.017f;
         Vector2 Start, End, vector;
         public override void AI()
         {
@@ -55,6 +56,8 @@ namespace TestEnvironment.NPCs
             if (alarmed)
             {
                 npc.noGravity = false;
+                npc.rotation = radians;
+
                 if (ticks < AItime)
                 {
                     float Angle = (float)Math.Atan2(player.position.Y - npc.position.Y,
@@ -65,6 +68,12 @@ namespace TestEnvironment.NPCs
                         npc.velocity.Y -= 6.5f + Main.rand.Next(0, 4);
                         if (npc.velocity.Y != 0)
                             npc.velocity.X += Distance(player, Angle, 3f).X;
+                        
+                        // npc facing player when jumping
+                        if (npc.position.X < player.position.X)
+                            npc.spriteDirection = -1;
+                        else if (npc.position.X > player.position.X)
+                            npc.spriteDirection = 1;
                     }
                     if (npc.velocity.Y == 0f)
                         npc.velocity = Vector2.Zero;
@@ -89,6 +98,13 @@ namespace TestEnvironment.NPCs
             if (navigate)
             {
                 npc.noGravity = true;
+
+                // npc looking at player
+                float Angle = (float)Math.Atan2(player.position.Y - npc.position.Y,
+                                                player.position.X - npc.position.X);
+                npc.rotation = Angle;
+                npc.spriteDirection = -1;
+
                 if (Depreciate > 0 && !alarmed && rotations < 4)
                 {
                     Depreciate--;
