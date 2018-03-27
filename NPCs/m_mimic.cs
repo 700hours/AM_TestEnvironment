@@ -4,14 +4,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace TestEnvironment.NPCs
+namespace ArchaeaMod.NPCs
 {
     public class m_mimic : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Magno Mimic");
+            Main.npcFrameCount[npc.type] = 6;
+        }
         public override void SetDefaults()
         {
             npc.width = 32;
-            npc.height = 32;
+            npc.height = 44;
             npc.friendly = false;
             npc.aiStyle = -1;
             npc.damage = 10;
@@ -23,18 +28,25 @@ namespace TestEnvironment.NPCs
         }
         int ticks = 0, position = 0, rotations = 0;
         bool alarmed = true, navigate = false;
+        bool detected = false;
         float Depreciate = 60, Point, Time = 60;
         const int AItime = 600;
         const float radians = 0.017f;
-        Vector2 Start, End, vector;
+        Vector2 Start, End;
+        Vector2 vector;
         public override void AI()
         {
-            ticks++;
-            npc.TargetClosest(true);
+            if (detected)
+                ticks++;
 
+            npc.TargetClosest(true);
             Player player = Main.player[npc.target];
 
+            if (Vector2.Distance(player.position - npc.position, Vector2.Zero) < 240f)
+                detected = true;
+                        
             Vector2 Position = new Vector2(player.position.X, player.position.Y);
+            #region dust
             int dustType = 71;
             float scale = 1f;
             if (ticks % 6 == 0 && navigate && !alarmed)
@@ -52,8 +64,9 @@ namespace TestEnvironment.NPCs
                 Main.dust[BL].noGravity = true;
                 Main.dust[BR].noGravity = true;
             }
-
-            if (alarmed)
+            #endregion
+            #region default behavior
+            if (detected && alarmed)
             {
                 npc.noGravity = false;
                 npc.rotation = radians;
@@ -71,9 +84,9 @@ namespace TestEnvironment.NPCs
                         
                         // npc facing player when jumping
                         if (npc.position.X < player.position.X)
-                            npc.spriteDirection = -1;
-                        else if (npc.position.X > player.position.X)
                             npc.spriteDirection = 1;
+                        else if (npc.position.X > player.position.X)
+                            npc.spriteDirection = -1;
                     }
                     if (npc.velocity.Y == 0f)
                         npc.velocity = Vector2.Zero;
@@ -95,7 +108,9 @@ namespace TestEnvironment.NPCs
                     End.Y = Start.Y;
                 }
             }
-            if (navigate)
+            #endregion
+            #region square orbit
+            if (detected && navigate)
             {
                 npc.noGravity = true;
 
@@ -202,6 +217,23 @@ namespace TestEnvironment.NPCs
                     rotations = 0;
                 }
             }
+            #endregion
+        }
+        
+        int num = 0, frame = 0;
+        public override void FindFrame(int frameHeight)
+        {
+            num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+
+            if (!detected)
+                npc.frame.Y = frame;
+            
+            if (npc.velocity.Y < 0f && frame < 5)
+                frame++;
+            if (npc.velocity.Y > 0f && frame > 1)
+                frame--;
+
+            npc.frame.Y = num * frame;
         }
 
         public bool TileCheck(int i, int j)
