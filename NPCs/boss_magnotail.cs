@@ -6,20 +6,20 @@ using Terraria.ModLoader;
 
 namespace TestEnvironment.NPCs
 {
-    public class m_diggertail : ModNPC
+    public class boss_magnotail : ModNPC
     {
         public override void SetDefaults()
         {
-            npc.width = 18;
-            npc.height = 36;
+            npc.width = 64;
+            npc.height = 128;
             npc.friendly = false;
             npc.aiStyle = 6;
         //  aiType = NPCID.Worm;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.behindTiles = true;
-            npc.damage = 15;
-            npc.defense = 3;
+            npc.damage = 18;
+            npc.defense = 4;
             npc.lifeMax = 120;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;

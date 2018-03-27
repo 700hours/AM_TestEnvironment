@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ArchaeaMod.NPCs
+namespace TestEnvironment.NPCs
 {
     public class m_diggerhead : ModNPC
     {
