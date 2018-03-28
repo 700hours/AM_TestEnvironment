@@ -20,11 +20,12 @@ namespace ArchaeaMod.NPCs
             npc.friendly = false;
             npc.aiStyle = -1;
             npc.damage = 10;
-            npc.defense = 15;
-            npc.lifeMax = 250;
+            npc.defense = 6;
+            npc.lifeMax = 120;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0.5f;
+            npc.netUpdate = true;
         }
         int ticks = 0, position = 0, rotations = 0;
         bool alarmed = true, navigate = false;

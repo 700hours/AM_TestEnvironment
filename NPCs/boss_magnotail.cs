@@ -4,17 +4,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace TestEnvironment.NPCs
+namespace ArchaeaMod.NPCs
 {
     public class boss_magnotail : ModNPC
     {
         public override void SetDefaults()
         {
-            npc.width = 64;
-            npc.height = 128;
+            npc.width = 46;
+            npc.height = 56;
             npc.friendly = false;
             npc.aiStyle = 6;
-        //  aiType = NPCID.Worm;
+          //aiType = NPCID.Worm;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.behindTiles = true;

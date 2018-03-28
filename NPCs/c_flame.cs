@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace ArchaeaMod.NPCs
 {
-    public class m_flame : ModNPC
+    public class c_flame : ModNPC
     {
     /*  public override string Texture
         {
@@ -26,7 +26,7 @@ namespace ArchaeaMod.NPCs
             npc.aiStyle = -1;
             npc.damage = 15;
             npc.defense = 0;
-            npc.lifeMax = 20;
+            npc.lifeMax = 40;
         //  npc.HitSound = SoundID.NPCHit1;
         //  npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
@@ -66,7 +66,7 @@ namespace ArchaeaMod.NPCs
             {
                 if (radius % 2f == 0)
                 {
-                    int d = Dust.NewDust(npc.position, npc.width, npc.height, 170, 0f, 0f, 100, default(Color), 1.2f);
+                    int d = Dust.NewDust(npc.position, npc.width, npc.height, 158, 0f, 0f, 100, default(Color), 1.2f);
                     Main.dust[d].noGravity = true;
                 }
             }   */
