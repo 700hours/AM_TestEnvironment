@@ -26,7 +26,6 @@ namespace ArchaeaMod.NPCs
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
-            npc.netUpdate = true;
         }
 
         bool TailSpawned = false;
@@ -76,8 +75,10 @@ namespace ArchaeaMod.NPCs
                         Main.npc[digger].ai[2] = (float)npc.whoAmI;
                         Main.npc[digger].ai[1] = (float)Previous;
                         Main.npc[Previous].ai[0] = (float)digger;
-                        if (Main.netMode != 0)
+                        if (Main.netMode == 2)
+                        {
                             NetMessage.SendData(23, -1, -1, null, digger, 0f, 0f, 0f, 0, 0, 0);
+                        }
                         Previous = digger;
                     }
                     TailSpawned = true;
@@ -106,6 +107,9 @@ namespace ArchaeaMod.NPCs
                 {
                     int attack = Projectile.NewProjectile(npc.position + new Vector2(npc.width / 2, npc.height / 2), Vector2.Zero, 96, 8 + Main.rand.Next(-2, 5), 0.5f, player.whoAmI, 0f, 0f);
                     Projectile proj = Main.projectile[attack];
+                    if (npc.life > npc.lifeMax / 2 || Main.npc[digger].life > Main.npc[digger].lifeMax / 2)
+                        Main.projectileTexture[proj.type] = mod.GetTexture("NPCs/m_flame");
+                    else Main.projectileTexture[proj.type] = mod.GetTexture("NPCs/c_flame");
                     proj.velocity.X = Distance(null, npc.rotation + radians * 270f, 16f).X;
                     proj.velocity.Y = Distance(null, npc.rotation + radians * 270f, 16f).Y;
                     proj.timeLeft = 45;
@@ -138,11 +142,12 @@ namespace ArchaeaMod.NPCs
                         flamesID = NPC.NewNPC((int)nX, (int)nY, mod.NPCType("c_flame"));
                         Main.npc[flamesID].damage = 16;
                     }
-                    if (Main.netMode != 0)
-                        NetMessage.SendData(23, -1, -1, null, flamesID, 0f, 0f, 0f, 0, 0, 0);
-
                     Main.npc[flamesID].ai[1] = degrees * k;
                     Main.npc[flamesID].scale = 1.2f;
+                    if (Main.netMode == 2)
+                    {
+                        NetMessage.SendData(23, -1, -1, null, flamesID, 0f, 0f, 0f, 0, 0, 0);
+                    }
                     flames = true;
                 }
             }
@@ -164,7 +169,7 @@ namespace ArchaeaMod.NPCs
                     for (int k = 0; k < 4; k++)
                     {
                         npc.ai[2] = NPC.NewNPC((int)npcCenter.X + Main.rand.Next(-64, 64), (int)npcCenter.Y, mod.NPCType("m_puphead"));
-                        if (Main.netMode != 0)
+                        if (Main.netMode == 2)
                         {
                             NetMessage.SendData(23, -1, -1, null, (int)npc.ai[2], 0f, 0f, 0f, 0, 0, 0);
                         }
@@ -182,7 +187,7 @@ namespace ArchaeaMod.NPCs
                 if (magnoClone)
                 {
                     npc.ai[3] = NPC.NewNPC((int)npcCenter.X, (int)npcCenter.Y, mod.NPCType("boss_magnohead"));
-                    if (Main.netMode != 0)
+                    if (Main.netMode == 2)
                     {
                         NetMessage.SendData(23, -1, -1, null, (int)npc.ai[3], 0f, 0f, 0f, 0, 0, 0);
                     }

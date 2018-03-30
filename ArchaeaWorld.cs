@@ -15,7 +15,7 @@ using Terraria.DataStructures;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TakerylProject
+namespace ArchaeaMod
 {
 	public class ProjectWorld : ModWorld
 	{

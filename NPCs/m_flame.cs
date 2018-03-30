@@ -48,6 +48,8 @@ namespace ArchaeaMod.NPCs
                 Initialize();
                 init = true;
             }
+            npc.color = Color.White;
+
             npc.TargetClosest(true);
 
             Player player = Main.player[npc.target];

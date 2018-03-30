@@ -8,6 +8,11 @@ namespace ArchaeaMod.NPCs
 {
     public class m_diggerhead : ModNPC
     {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Magno Digger");
+        //  Main.npcCatchable[npc.type] = true;
+        }
         public override void SetDefaults()
         {
             npc.width = 30;
@@ -53,7 +58,10 @@ namespace ArchaeaMod.NPCs
                         Main.npc[digger].ai[2] = (float)npc.whoAmI;
                         Main.npc[digger].ai[1] = (float)Previous;
                         Main.npc[Previous].ai[0] = (float)digger;
-                        NetMessage.SendData(23, -1, -1, null, digger, 0f, 0f, 0f, 0, 0, 0);
+                        if (Main.netMode == 2)
+                        {
+                            NetMessage.SendData(23, -1, -1, null, digger, 0f, 0f, 0f, 0, 0, 0);
+                        }
                         Previous = digger;
                     }
                     TailSpawned = true;

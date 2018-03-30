@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.GameInput;
 
-namespace TakerylProject
+namespace ArchaeaMod
 {
 	public class ProjectPlayer : ModPlayer
 	{

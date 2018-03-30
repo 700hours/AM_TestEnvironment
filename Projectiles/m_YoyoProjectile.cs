@@ -7,11 +7,14 @@ using Terraria.ModLoader;
 
 namespace ArchaeaMod.Projectiles
 {
-    public class m_yoyo : ModProjectile
+    public class m_yoyoprojectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Mango Yoyo");
+            ProjectileID.Sets.YoyosLifeTimeMultiplier[projectile.type] = 6.5f;
+            ProjectileID.Sets.YoyosMaximumRange[projectile.type] = 275f;
+            ProjectileID.Sets.YoyosTopSpeed[projectile.type] = 13.5f;
         }
         public override void SetDefaults()
         {

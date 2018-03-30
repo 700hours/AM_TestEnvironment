@@ -12,6 +12,9 @@ namespace ArchaeaMod.NPCs
         {
             DisplayName.SetDefault("Magno Mimic");
             Main.npcFrameCount[npc.type] = 6;
+            //  to circumvent custom spawning net code
+            //  unnecessary for final version
+            Main.npcCatchable[npc.type] = true;
         }
         public override void SetDefaults()
         {
@@ -25,28 +28,40 @@ namespace ArchaeaMod.NPCs
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0.5f;
-            npc.netUpdate = true;
         }
-        int ticks = 0, position = 0, rotations = 0;
+        bool init = false;
         bool alarmed = true, navigate = false;
         bool detected = false;
+        int ticks = 0, position = 0, rotations = 0;
         float Depreciate = 60, Point, Time = 60;
         const int AItime = 600;
         const float radians = 0.017f;
         Vector2 Start, End;
         Vector2 vector;
+        Vector2 Position;
+        public void Initialize()
+        {
+            npc.TargetClosest(true);
+        }
         public override void AI()
         {
+            if (!init)
+            {
+                Initialize();
+                init = true;
+            }
             if (detected)
                 ticks++;
 
-            npc.TargetClosest(true);
             Player player = Main.player[npc.target];
 
-            if (Vector2.Distance(player.position - npc.position, Vector2.Zero) < 240f)
+            if (!detected && (Vector2.Distance(player.position - npc.position, Vector2.Zero) < 240f || npc.life < npc.lifeMax))
+            {
+                npc.TargetClosest(true);
                 detected = true;
+            }
                         
-            Vector2 Position = new Vector2(player.position.X, player.position.Y);
+            Position = new Vector2(player.position.X, player.position.Y);
             #region dust
             int dustType = 71;
             float scale = 1f;
@@ -88,6 +103,9 @@ namespace ArchaeaMod.NPCs
                             npc.spriteDirection = 1;
                         else if (npc.position.X > player.position.X)
                             npc.spriteDirection = -1;
+
+                        if (Main.netMode != 1)
+                            npc.netUpdate = true;
                     }
                     if (npc.velocity.Y == 0f)
                         npc.velocity = Vector2.Zero;
@@ -127,6 +145,7 @@ namespace ArchaeaMod.NPCs
                     Point = (Time - Depreciate) / Time;
                     npc.position = Vector2.Lerp(Start, End, Point);
                 }
+                #region all square directions
                 if (Depreciate <= 0 && rotations < 4)
                 {
                     position = Main.rand.Next(0, 5);
@@ -200,9 +219,12 @@ namespace ArchaeaMod.NPCs
                     {
                         int teleport = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), 32, 32, dustType, 0f, 0f, 255, Color.White, scale);
                     }
+                    if (Main.netMode != 1)
+                        npc.netUpdate = true;
                     rotations++;
                     Depreciate = 60;
                 }
+                #endregion
 
                 vector = new Vector2(player.position.X + Main.rand.Next(-400, 400), player.position.Y + Main.rand.Next(-400, 400));
                 if (rotations >= 4 && !TileCheck((int)vector.X/16, (int)vector.Y/16))
@@ -211,6 +233,8 @@ namespace ArchaeaMod.NPCs
                     {
                         int teleport = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), 32, 32, dustType, 0f, 0f, 255, Color.White, scale);
                     }
+                    if (Main.netMode != 1)
+                        npc.netUpdate = true;
                     npc.position = vector;
                     navigate = false;
                     ticks = 0;
@@ -218,13 +242,14 @@ namespace ArchaeaMod.NPCs
                     rotations = 0;
                 }
             }
-            #endregion
+            #endregion  
         }
         
         int num = 0, frame = 0;
         public override void FindFrame(int frameHeight)
         {
-            num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+            if (!Main.dedServ)
+                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
 
             if (!detected)
                 npc.frame.Y = frame;
@@ -242,9 +267,9 @@ namespace ArchaeaMod.NPCs
         //  bool Active = Main.tile[i, j].active() == false && Main.tile[i + 1, j + 1].active() == false;
             bool Solid = Main.tileSolid[Main.tile[i, j].type] == false && Main.tileSolid[Main.tile[i+1, j+1].type] == false;
 
-            if (/*Active && */Solid)
+            if (Solid)
                 return true;
-            else return false;
+            else return false;  
         }
 
         public Vector2 Distance(Player player, float Angle, float Radius)
