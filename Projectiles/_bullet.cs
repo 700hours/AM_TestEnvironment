@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace ArchaeaMod.Projectiles
 {
-    class magno_bullet : ModProjectile
+    class _bullet : ModProjectile
     {
         public override void SetDefaults()
         {
@@ -36,34 +36,21 @@ namespace ArchaeaMod.Projectiles
         Player player;
         public void Initialize()
         {
-            //  Projectile proj = Main.projectile[projectile.whoAmI];
-            //  Main.projectileTexture[projectile.type] = mod.GetTexture("NPCs/m_flame");
-
             Player player = Main.player[projectile.owner];
             if (Main.rand.NextFloat() >= .80f)
             {
                 if (player.direction == 1)
                 {
-                    position = new Vector2(projectile.position.X, projectile.position.Y);
+                    position = new Vector2(projectile.position.X + player.width * 2, projectile.position.Y);
                 }
                 else
                 {
-                    position = new Vector2(projectile.position.X - player.width, projectile.position.Y);
+                    position = projectile.position;
                 }
                 // play sound
-                // type 134 = missile, type 207 = chlorophyte bullet
-                proj1 = Projectile.NewProjectile(position, projectile.velocity, 207, 20 + Main.rand.Next(0, 10), 2f, projectile.owner, projectile.rotation, 0f);
-                proj2 = Projectile.NewProjectile(position, projectile.velocity, 207, 20 + Main.rand.Next(0, 10), 2f, projectile.owner, projectile.rotation, 0f);
-                if (Main.netMode == 1)
-                {
-                    NetMessage.SendData(27, -1, -1, null, proj1);
-                    NetMessage.SendData(27, -1, -1, null, proj2);
-                }
+                proj1 = Projectile.NewProjectile(position, projectile.velocity, 134, 20 + Main.rand.Next(0, 10), 2f, projectile.owner, 0f, 0f);
+                proj2 = Projectile.NewProjectile(position, projectile.velocity, 134, 20 + Main.rand.Next(0, 10), 2f, projectile.owner, 0f, 0f);
             }
-
-            projectile.rotation = projectile.ai[0];
-            if (projectile.velocity.X < 0f)
-                projectile.spriteDirection = -1;
         }
         public override bool PreAI()
         {
@@ -100,22 +87,13 @@ namespace ArchaeaMod.Projectiles
             float WaveOffset1 = (float)Math.Sin(WaveTimer) * Offset1;
             float WaveOffset2 = (float)Math.Sin(WaveTimer) * Offset2;
             #endregion
-            if (Proj1.type != projectile.type)
-            {
-                Proj1.position.X -= Sin * WaveOffset1;
-                Proj1.position.Y += Cos * WaveOffset1;
-            }
-            if (Proj2.type != projectile.type)
-            { 
-                Proj2.position.X -= Sin * WaveOffset2;
-                Proj2.position.Y += Cos * WaveOffset2;
-            }
+            Proj1.position.X -= Sin * WaveOffset1;
+            Proj1.position.Y += Cos * WaveOffset1;
+            
+            Proj2.position.X -= Sin * WaveOffset2;
+            Proj2.position.Y += Cos * WaveOffset2;
             
             return true;
-        }
-        public override void Kill(int timeLeft)
-        {
-        //  Main.PlaySound(2, player.Center, 10);
         }
     }
 }

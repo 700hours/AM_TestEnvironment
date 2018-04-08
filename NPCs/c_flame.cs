@@ -63,15 +63,12 @@ namespace ArchaeaMod.NPCs
 
             if (radius < 1f)
                 npc.active = false;
-            /*
+            
             for (int k = 0; k < 8; k++)
             {
-                if (radius % 2f == 0)
-                {
-                    int d = Dust.NewDust(npc.position, npc.width, npc.height, 158, 0f, 0f, 100, default(Color), 1.2f);
-                    Main.dust[d].noGravity = true;
-                }
-            }   */
+                int d = Dust.NewDust(npc.position, npc.width, npc.height, 158, 0f, 0f, 100, default(Color), 1.2f);
+                Main.dust[d].noGravity = true;
+            }
         }
     }
 }

@@ -32,6 +32,7 @@ namespace ArchaeaMod.NPCs
         bool flames = false;
         bool pupsSpawned = false;
         bool magnoClone = false;
+        bool soundOnce = false;
         bool part2 = false;
         int Previous, digger, despawn = 210;
         int pups = 255, clone, timeLeft = 600;
@@ -81,13 +82,14 @@ namespace ArchaeaMod.NPCs
                         }
                         Previous = digger;
                     }
+                    npc.netUpdate = true;
                     TailSpawned = true;
                 }
             }
-            else if (npc.ai[0] >= 2)
+        /*  else if (npc.ai[0] >= 2)
             {
                 npc.damage = 30;
-            }
+            }   */
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
                 npc.TargetClosest(true);
@@ -107,9 +109,7 @@ namespace ArchaeaMod.NPCs
                 {
                     int attack = Projectile.NewProjectile(npc.position + new Vector2(npc.width / 2, npc.height / 2), Vector2.Zero, 96, 8 + Main.rand.Next(-2, 5), 0.5f, player.whoAmI, 0f, 0f);
                     Projectile proj = Main.projectile[attack];
-                    if (npc.life > npc.lifeMax / 2 || Main.npc[digger].life > Main.npc[digger].lifeMax / 2)
-                        Main.projectileTexture[proj.type] = mod.GetTexture("NPCs/m_flame");
-                    else Main.projectileTexture[proj.type] = mod.GetTexture("NPCs/c_flame");
+//                  if (npc.life > npc.lifeMax / 2 || Main.npc[digger].life > Main.npc[digger].lifeMax / 2)
                     proj.velocity.X = Distance(null, npc.rotation + radians * 270f, 16f).X;
                     proj.velocity.Y = Distance(null, npc.rotation + radians * 270f, 16f).Y;
                     proj.timeLeft = 45;
@@ -118,8 +118,7 @@ namespace ArchaeaMod.NPCs
                     proj.friendly = false;
                     proj.hostile = true;
                 }
-            }
-
+            }   
             #region spirit flames
             if (!flames && Main.rand.Next(0, 6000) == 0)
             {
@@ -150,6 +149,7 @@ namespace ArchaeaMod.NPCs
                     }
                     flames = true;
                 }
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/curse"), npc.Center);
             }
             if (flames)
             {
@@ -159,8 +159,10 @@ namespace ArchaeaMod.NPCs
                     flames = false;
             }
             #endregion
+            
+            // needs to sprite/code separate NPC for magno clone
             #region magno clone sequence
-            ticks++;
+        /*  ticks++;
             npcCenter = new Vector2(npc.position.X + npc.width / 2, npc.position.Y + npc.height / 2);
             if (!Main.npc[(int)npc.ai[3]].active)
             {
@@ -173,6 +175,7 @@ namespace ArchaeaMod.NPCs
                         {
                             NetMessage.SendData(23, -1, -1, null, (int)npc.ai[2], 0f, 0f, 0f, 0, 0, 0);
                         }
+                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/conjure"), npc.Center);
                         pupsSpawned = true;
                     }
                 }
@@ -186,6 +189,7 @@ namespace ArchaeaMod.NPCs
                 }
                 if (magnoClone)
                 {
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/conjure"), npc.Center);
                     npc.ai[3] = NPC.NewNPC((int)npcCenter.X, (int)npcCenter.Y, mod.NPCType("boss_magnohead"));
                     if (Main.netMode == 2)
                     {
@@ -213,14 +217,21 @@ namespace ArchaeaMod.NPCs
                 Main.npc[(int)npc.ai[3]].HitEffect(0, 10.0);
                 Main.npc[(int)npc.ai[3]].active = false;
                 timeLeft = 600;
-            }
+            }   */
             #endregion
 
             if (npc.life < npc.lifeMax / 2 || Main.npc[digger].life < Main.npc[digger].lifeMax / 2)
             {
-                // playsound
+                if (!soundOnce)
+                {
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/blast"), npc.Center);
+                    soundOnce = true;
+                }
+                npc.color = Color.Orange;
+                Main.npc[digger].color = Color.Orange;
+
                 part2 = true;
-            }
+            } 
         }
 
         public Vector2 Distance(Player player, float Angle, float Radius)

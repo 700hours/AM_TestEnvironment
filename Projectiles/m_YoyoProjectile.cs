@@ -27,7 +27,6 @@ namespace ArchaeaMod.Projectiles
             projectile.scale = 1f;
             projectile.melee = true;
             projectile.extraUpdates = 0;
-            projectile.netUpdate = true;
         }
     }
 }

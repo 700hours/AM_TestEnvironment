@@ -14,7 +14,8 @@ namespace ArchaeaMod.NPCs
             npc.height = 56;
             npc.friendly = false;
             npc.aiStyle = 6;
-          //aiType = NPCID.Worm;
+            //aiType = NPCID.Worm;
+            npc.boss = true;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.behindTiles = true;

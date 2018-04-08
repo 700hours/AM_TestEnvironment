@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using TestEnvironment.Projectiles;
+using ArchaeaMod.Projectiles;
 
 namespace ArchaeaMod.Items
 {
@@ -12,21 +12,25 @@ namespace ArchaeaMod.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magno Gun");
-            Tooltip.SetDefault("20% chance to fire missiles");
+            Tooltip.SetDefault("20% chance to fire homing bullets"
+                +   "\n20% chance not to consume ammo");
         }
         public override void SetDefaults()
         {
             item.width = 62;
             item.height = 24;
-            item.useTime = 10;
-            item.useAnimation = 10;
+            item.scale = 0.75f;
+            item.useTime = 15;
+            item.useAnimation = 15;
             item.useStyle = 5;
             item.damage = 10;
             item.knockBack = 3f;
+            item.shootSpeed = 18f;
             item.value = 2500;
             item.rare = 1;
             //  custom sound?
             //  item.UseSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/*");
+            item.UseSound = SoundID.Item11;
             item.autoReuse = true;
             item.consumable = false;
             item.noMelee = true;
@@ -79,19 +83,23 @@ namespace ArchaeaMod.Items
                 nX = position.X + (float)((radius * -1 / 4) * Math.Cos(player.itemRotation));
                 nY = position.Y + (float)((radius * -1 / 4) * Math.Sin(player.itemRotation));
             }
-            if ((player.itemRotation >= MathHelper.ToRadians(315) && player.itemRotation <= MathHelper.ToRadians(360)) ||
-                 player.itemRotation >= MathHelper.ToRadians(0) && player.itemRotation <= MathHelper.ToRadians(45))
+            if (player.itemRotation >= MathHelper.ToRadians(315) && player.itemRotation <= MathHelper.ToRadians(360) ||
+                player.itemRotation >= MathHelper.ToRadians(135) && player.itemRotation <= MathHelper.ToRadians(180) ||
+                player.itemRotation >= MathHelper.ToRadians(0) && player.itemRotation <= MathHelper.ToRadians(45))
             {
                 Offset = 20f;
             }
             else Offset = 8f;
             Proj = Projectile.NewProjectile(new Vector2(nX + Offset, nY + Offset / 2), speed, mod.ProjectileType<magno_bullet>(), 15 + Main.rand.Next(-3, 5), 3f, player.whoAmI, player.itemRotation, 0f);
-            Projectile Proj1 = Main.projectile[Proj];
-            Proj1.rotation = player.itemRotation + MathHelper.ToRadians(90);
+            if (Main.netMode == 1) NetMessage.SendData(27, -1, -1, null, Proj);
             
             return true;
         }
 
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-8, 0);
+        }
         public override bool ConsumeAmmo(Player player)
         {
             return Main.rand.NextFloat() >= .20f;
